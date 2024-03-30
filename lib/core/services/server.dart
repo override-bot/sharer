@@ -46,7 +46,7 @@ class LocalNetworkServer {
   }) async {
     if (serverAddress.isEmpty) return false;
     try {
-      closeSocket(notify: false);
+      closeSocket();
       _maxDownloads = maxConcurrentDownloads;
       _deleteOnError = deleteOnError;
       serverAddress = serverAddress.replaceFirst("/", "");
@@ -153,7 +153,7 @@ class LocalNetworkServer {
   }) async {
     if (serverAddress.isEmpty) return false;
     try {
-      closeSocket(notify: false);
+      closeSocket();
       _maxDownloads = maxConcurrentDownloads;
       _deleteOnError = deleteOnError;
       _ipAddress = (await retrieveHotspotAddress());
@@ -185,13 +185,13 @@ class LocalNetworkServer {
           (event) async {
             if (event.toString().startsWith(fileTransferCode)) {
               for (String msg in event.toString().split(groupSeparation)) {
-                UrlOperations _urlOperations = UrlOperations(msg: msg);
-                String url = _urlOperations.getUrl();
-                int size = _urlOperations.getFileSize();
+                UrlOperations urlOperations = UrlOperations(msg: msg);
+                String url = urlOperations.getUrl();
+                int size = urlOperations.getFileSize();
                 if (!(url.startsWith("http://$_ipAddress:$port/"))) {
-                  int id = _urlOperations.getId();
+                  int id = urlOperations.getId();
                   String filename = await _setPathToSave(
-                      _urlOperations.getFileName(), downloadPath);
+                      urlOperations.getFileName(), downloadPath);
                   String path = "$downloadPath$filename";
                   CancelToken token = CancelToken();
 
@@ -641,7 +641,7 @@ class LocalNetworkServer {
     }
   }
 
-  bool closeSocket({bool notify = true, port}) {
+  bool closeSocket({port}) {
     try {
       if (_server != null) _server?.close();
       for (WebSocket? socket in _sockets) {
