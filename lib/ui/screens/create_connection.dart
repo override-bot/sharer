@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sharer/core/viewmodels/server_viewmodel.dart';
+import 'package:sharer/utils/colors.dart';
 
 class CreateConnection extends StatefulWidget {
   const CreateConnection({super.key});
@@ -18,7 +19,7 @@ class _CreateConnectionState extends State<CreateConnection> {
       appBar: AppBar(
         title: Text(
           "Scan qr code",
-          style: TextStyle(color: Colors.blue),
+          style: TextStyle(color: ceoPurple),
         ),
       ),
       body: Center(

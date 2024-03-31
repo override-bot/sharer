@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sharer/core/viewmodels/file_viewmodel.dart';
 import 'package:sharer/core/viewmodels/server_viewmodel.dart';
+import 'package:sharer/ui/screens/app_index.dart';
 import 'package:sharer/ui/screens/home.dart';
 
 void main() {
@@ -21,7 +23,10 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-        providers: [ChangeNotifierProvider(create: (_) => ServerVm())],
+        providers: [
+          ChangeNotifierProvider(create: (_) => ServerVm()),
+          ChangeNotifierProvider(create: (_) => FileViewmodel())
+        ],
         child: MaterialApp(
             title: 'Flutter Demo',
             theme: ThemeData(
@@ -44,6 +49,6 @@ class _MyAppState extends State<MyApp> {
               useMaterial3: true,
             ),
             debugShowCheckedModeBanner: false,
-            home: HomeView()));
+            home: AppIndex()));
   }
 }

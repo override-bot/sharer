@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:sharer/core/data/models/host_model.dart';
 import 'package:sharer/ui/shared/popup.dart';
+import 'package:sharer/utils/colors.dart';
 import 'package:sharer/utils/router.dart';
 
 import '../../core/services/device_info.dart';
@@ -63,7 +64,7 @@ class _JoinConnectionState extends State<JoinConnection> {
       appBar: AppBar(
         title: Text(
           "Scan qr code",
-          style: TextStyle(color: Colors.blue),
+          style: TextStyle(color: ceoPurple),
         ),
       ),
       body: Column(

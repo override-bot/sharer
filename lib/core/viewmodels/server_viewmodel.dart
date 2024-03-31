@@ -5,6 +5,7 @@ import 'package:sharer/core/data/models/host_model.dart';
 import 'package:sharer/core/services/device_info.dart';
 import 'package:sharer/core/services/server.dart';
 import 'package:sharer/ui/shared/popup.dart';
+import 'package:sharer/utils/format_bytes.dart';
 import 'package:sharer/utils/router.dart';
 import '../../utils/port_generator.dart';
 import '../data/models/transfer_update.dart';
@@ -44,6 +45,7 @@ class ServerVm extends ChangeNotifier {
       bool soc = await _borrowedSocket.startSocket(
           onCloseSocket: () {
             PopUp().showError("A device disconnected from network", context);
+
             redpart();
           },
           maxConcurrentDownloads: 10,
@@ -55,10 +57,12 @@ class ServerVm extends ChangeNotifier {
             print(_paricipant);
             PopUp().showSuccess("$name has joined the network", context);
           },
+          deleteOnError: false,
           transferUpdate: (transfer) {
             updateDownloads(transfer);
             updateUploads(transfer);
-            print('${transfer.count}/ ${transfer.total}');
+            print(
+                '${formatBytes(transfer.count)}/ ${formatBytes(transfer.total)}');
           },
           receiveString: (val) {});
 
@@ -86,6 +90,7 @@ class ServerVm extends ChangeNotifier {
       bool soc = await _borrowedSocket.connectToSocket(
           onCloseSocket: () {
             PopUp().showError("Connection closed", context);
+            closeSocket(port);
             _isClient = false;
             notifyListeners();
           },
@@ -101,7 +106,8 @@ class ServerVm extends ChangeNotifier {
           transferUpdate: (transfer) {
             updateDownloads(transfer);
             updateUploads(transfer);
-            print('${transfer.count}/ ${transfer.total}');
+            print(
+                '${formatBytes(transfer.count)}/ ${formatBytes(transfer.total)}');
           },
           receiveString: (req) {});
       if (soc == true) {

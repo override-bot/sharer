@@ -23,14 +23,14 @@ class TransferUpdate {
   });
 }
 
-class FutureDownload {
+class DownloadQueueItem {
   String url;
   bool downloading;
   int id;
   final String filename;
   final String path;
   final CancelToken cancelToken;
-  FutureDownload({
+  DownloadQueueItem({
     required this.url,
     required this.downloading,
     required this.id,

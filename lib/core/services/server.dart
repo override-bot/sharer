@@ -11,6 +11,15 @@ import '../../utils/constants.dart';
 import '../data/models/transfer_update.dart';
 
 class LocalNetworkServer {
+  int _maxDownloads = 2;
+
+  final List<WebSocket?> _sockets = [];
+  final List<DownloadQueueItem> _downloadQueueItems = [];
+  final Dio _dio = Dio();
+  bool _deleteOnError = false;
+  String _ipAddress = '';
+  HttpServer? _server;
+  static void _doNothing() {}
   Future<String> retrieveHotspotAddress() async {
     for (var interface in await NetworkInterface.list()) {
       for (var address in interface.addresses) {
@@ -22,16 +31,6 @@ class LocalNetworkServer {
     }
     throw Exception('Address not found');
   }
-
-  int _maxDownloads = 2;
-
-  final List<WebSocket?> _sockets = [];
-  final List<FutureDownload> _futureDownloads = [];
-  final Dio _dio = Dio();
-  bool _deleteOnError = false;
-  String _ipAddress = '';
-  HttpServer? _server;
-  static void _doNothing() {}
 
   Future<bool> startSocket({
     required String serverAddress,
@@ -93,8 +92,8 @@ class LocalNetworkServer {
                       ),
                     );
 
-                    _futureDownloads.add(
-                      FutureDownload(
+                    _downloadQueueItems.add(
+                      DownloadQueueItem(
                         url: url,
                         downloading: false,
                         id: id,
@@ -134,8 +133,8 @@ class LocalNetworkServer {
       _server = httpServer;
       handlePendingDownloads(transferUpdate, downloadPath, port);
       return true;
-    } catch (_) {
-      return false;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -209,8 +208,8 @@ class LocalNetworkServer {
                     ),
                   );
 
-                  _futureDownloads.add(
-                    FutureDownload(
+                  _downloadQueueItems.add(
+                    DownloadQueueItem(
                       url: url,
                       downloading: false,
                       id: id,
@@ -249,24 +248,24 @@ class LocalNetworkServer {
       String downloadPath, int port) async {
     while (_server != null) {
       await Future.delayed(const Duration(seconds: 1));
-      if (_futureDownloads.isNotEmpty) {
-        if (_futureDownloads.where((i) => i.downloading == true).isEmpty) {
-          if (_futureDownloads.length <= _maxDownloads) {
+      if (_downloadQueueItems.isNotEmpty) {
+        if (_downloadQueueItems.where((i) => i.downloading == true).isEmpty) {
+          if (_downloadQueueItems.length <= _maxDownloads) {
             List<Future> futures = [];
 
-            for (int i = 0; i < _futureDownloads.length; i++) {
-              _futureDownloads[i].downloading = true;
+            for (int i = 0; i < _downloadQueueItems.length; i++) {
+              _downloadQueueItems[i].downloading = true;
               futures.add(
                 Future(
                   () async {
-                    FutureDownload download = _futureDownloads[i];
+                    DownloadQueueItem download = _downloadQueueItems[i];
                     await downloadFile(
                       port: port,
                       url: download.url,
                       transferUpdate: transferUpdate,
                       downloadPath: downloadPath,
                       done: () {
-                        _futureDownloads
+                        _downloadQueueItems
                             .removeWhere((i) => i.id == download.id);
                       },
                       filename: download.filename,
@@ -285,18 +284,18 @@ class LocalNetworkServer {
             List<Future> futures = [];
 
             for (int i = 0; i < _maxDownloads; i++) {
-              _futureDownloads[i].downloading = true;
+              _downloadQueueItems[i].downloading = true;
               futures.add(
                 Future(
                   () async {
-                    FutureDownload download = _futureDownloads[i];
+                    DownloadQueueItem download = _downloadQueueItems[i];
                     await downloadFile(
                       port: port,
                       url: download.url,
                       transferUpdate: transferUpdate,
                       downloadPath: downloadPath,
                       done: () {
-                        _futureDownloads
+                        _downloadQueueItems
                             .removeWhere((i) => i.id == download.id);
                       },
                       filename: download.filename,
@@ -651,7 +650,7 @@ class LocalNetworkServer {
       }
       _server = null;
       _sockets.clear();
-      _futureDownloads.clear();
+      _downloadQueueItems.clear();
       _ipAddress = '';
 
       return true;
