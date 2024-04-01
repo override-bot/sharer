@@ -9,6 +9,8 @@ class TransferUpdate {
   final bool failed;
   final bool receiving;
   final int id;
+  int speed;
+  DateTime startTime;
   final CancelToken? cancelToken;
   TransferUpdate({
     required this.filename,
@@ -18,9 +20,19 @@ class TransferUpdate {
     required this.completed,
     required this.failed,
     required this.receiving,
+    this.speed = 0,
+    DateTime? startTime,
     required this.id,
     required this.cancelToken,
-  });
+  }) : startTime = startTime ?? DateTime.now();
+
+  updateSpeed(newSpeed) {
+    speed = newSpeed;
+  }
+
+  updateStartTime(DateTime newStartTime) {
+    startTime = newStartTime;
+  }
 }
 
 class DownloadQueueItem {

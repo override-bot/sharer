@@ -5,6 +5,7 @@ import 'package:sharer/core/data/models/host_model.dart';
 import 'package:sharer/core/services/device_info.dart';
 import 'package:sharer/core/services/server.dart';
 import 'package:sharer/ui/shared/popup.dart';
+import 'package:sharer/utils/calculate_download_speed.dart';
 import 'package:sharer/utils/format_bytes.dart';
 import 'package:sharer/utils/router.dart';
 import '../../utils/port_generator.dart';
@@ -59,10 +60,13 @@ class ServerVm extends ChangeNotifier {
           },
           deleteOnError: false,
           transferUpdate: (transfer) {
-            updateDownloads(transfer);
-            updateUploads(transfer);
-            print(
-                '${formatBytes(transfer.count)}/ ${formatBytes(transfer.total)}');
+            int speed = updateDownloadSpeed(transfer.count, transfer.startTime);
+            TransferUpdate newUpdate = transfer;
+            print(speed);
+            newUpdate.updateSpeed(speed);
+            updateDownloads(newUpdate);
+            updateUploads(newUpdate);
+            print('${formatBytes(speed)}/ ${formatBytes(transfer.total)}');
           },
           receiveString: (val) {});
 
@@ -104,10 +108,13 @@ class ServerVm extends ChangeNotifier {
             PopUp().showSuccess("Connected to $address", context);
           },
           transferUpdate: (transfer) {
-            updateDownloads(transfer);
-            updateUploads(transfer);
-            print(
-                '${formatBytes(transfer.count)}/ ${formatBytes(transfer.total)}');
+            int speed = updateDownloadSpeed(transfer.count, transfer.startTime);
+            TransferUpdate newUpdate = transfer;
+            print(speed);
+            newUpdate.updateSpeed(speed);
+            updateDownloads(newUpdate);
+            updateUploads(newUpdate);
+            print('${formatBytes(speed)}/ ${formatBytes(transfer.total)}');
           },
           receiveString: (req) {});
       if (soc == true) {

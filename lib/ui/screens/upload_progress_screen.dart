@@ -155,12 +155,12 @@ class _UploadsViewState extends State<UploadsView> {
                       title: Row(
                         children: [
                           Container(
-                              width: MediaQuery.of(context).size.width / 2.3,
+                              width: MediaQuery.of(context).size.width / 3,
                               child: Text(
                                 socketViewmodel.uploads[index].filename,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                    fontSize: TextSize().h3(context),
+                                    fontSize: TextSize().p(context),
                                     color: ceoBlack,
                                     fontWeight: FontWeight.w500),
                               )),
@@ -174,11 +174,22 @@ class _UploadsViewState extends State<UploadsView> {
                           ),
                         ],
                       ),
-                      subtitle: LinearProgressIndicator(
-                        color: ceoPurple,
-                        value: socketViewmodel.uploads[index].count /
-                            socketViewmodel.uploads[index].total,
-                      ),
+                      subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            LinearProgressIndicator(
+                              color: ceoPurple,
+                              value: socketViewmodel.uploads[index].count /
+                                  socketViewmodel.uploads[index].total,
+                            ),
+                            Text(
+                              "${formatBytes(socketViewmodel.uploads[index].speed)}/s",
+                              style: TextStyle(
+                                  fontSize: TextSize().small(context),
+                                  color: ceoPurple,
+                                  fontWeight: FontWeight.w300),
+                            ),
+                          ]),
                       trailing: IconButton(
                         onPressed: () {
                           socketViewmodel

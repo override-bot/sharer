@@ -426,6 +426,7 @@ class LocalNetworkServer {
     required void Function(int) updateCount,
   }) async* {
     int total = await file.length();
+    DateTime startTime = DateTime.now();
     int count = 0;
     await for (List<int> chip in file.openRead()) {
       count += (chip as Uint8List).lengthInBytes;
@@ -439,6 +440,7 @@ class LocalNetworkServer {
           total: total,
           completed: false,
           failed: false,
+          startTime: startTime,
           receiving: false,
           id: id,
           cancelToken: null,
@@ -485,6 +487,7 @@ class LocalNetworkServer {
     }
     int count = 0;
     int total = 0;
+    DateTime startTime = DateTime.now();
     bool failed = false;
     try {
       _dio.download(
@@ -504,6 +507,7 @@ class LocalNetworkServer {
               completed: false,
               failed: false,
               receiving: true,
+              startTime: startTime,
               id: id,
               cancelToken: token,
             ),

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, sort_child_properties_last
 
 import 'package:flutter/material.dart';
 import 'package:open_file_plus/open_file_plus.dart';
@@ -42,7 +42,7 @@ class _DownloadsViewState extends State<DownloadsView> {
                           socketViewmodel.downloads[index].filename,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                              fontSize: TextSize().h3(context),
+                              fontSize: TextSize().p(context),
                               color: ceoBlack,
                               fontWeight: FontWeight.w500),
                         )),
@@ -158,12 +158,12 @@ class _DownloadsViewState extends State<DownloadsView> {
                       title: Row(
                         children: [
                           Container(
-                              width: MediaQuery.of(context).size.width / 2.2,
+                              width: MediaQuery.of(context).size.width / 3,
                               child: Text(
                                 socketViewmodel.downloads[index].filename,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                    fontSize: TextSize().h3(context),
+                                    fontSize: TextSize().p(context),
                                     color: ceoBlack,
                                     fontWeight: FontWeight.w500),
                               )),
@@ -177,11 +177,22 @@ class _DownloadsViewState extends State<DownloadsView> {
                           ),
                         ],
                       ),
-                      subtitle: LinearProgressIndicator(
-                        color: ceoPurple,
-                        value: socketViewmodel.downloads[index].count /
-                            socketViewmodel.downloads[index].total,
-                      ),
+                      subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            LinearProgressIndicator(
+                              color: ceoPurple,
+                              value: socketViewmodel.downloads[index].count /
+                                  socketViewmodel.downloads[index].total,
+                            ),
+                            Text(
+                              "${formatBytes(socketViewmodel.downloads[index].speed)}/s",
+                              style: TextStyle(
+                                  fontSize: TextSize().small(context),
+                                  color: ceoPurple,
+                                  fontWeight: FontWeight.w300),
+                            ),
+                          ]),
                       trailing: IconButton(
                         onPressed: () {
                           socketViewmodel
