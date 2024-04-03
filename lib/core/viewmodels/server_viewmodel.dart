@@ -53,7 +53,7 @@ class ServerVm extends ChangeNotifier {
           serverAddress: wifiIP,
           downloadPath: path,
           port: port,
-          onConnect: (name, address) {
+          onConnect: (name, address, deviceId, regNumber) {
             upPart();
             print(_paricipant);
             PopUp().showSuccess("$name has joined the network", context);
@@ -92,6 +92,8 @@ class ServerVm extends ChangeNotifier {
 
     try {
       bool soc = await _borrowedSocket.connectToSocket(
+          regNumber: '',
+          deviceId: "",
           onCloseSocket: () {
             PopUp().showError("Connection closed", context);
             closeSocket(port);

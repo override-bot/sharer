@@ -38,7 +38,9 @@ class LocalNetworkServer {
     required int port,
     int maxConcurrentDownloads = 2,
     bool deleteOnError = true,
-    required void Function(String name, String address) onConnect,
+    required void Function(
+            String name, String address, String deviceId, String regNumber)
+        onConnect,
     required void Function(TransferUpdate transfer) transferUpdate,
     required void Function(dynamic req) receiveString,
     void Function() onCloseSocket = _doNothing,
@@ -118,8 +120,11 @@ class LocalNetworkServer {
                     .removeWhere((e) => e == null ? true : e.closeCode == port);
               },
             );
-            onConnect("${req.uri.queryParameters['deviceName']}",
-                "${req.uri.queryParameters['ip']}:$port");
+            onConnect(
+                "${req.uri.queryParameters['deviceName']}",
+                "${req.uri.queryParameters['ip']}:$port",
+                '${req.uri.queryParameters['deviceId']}',
+                '${req.uri.queryParameters['regNumber']}');
           } else if (req.uri.path == '/file' && req.uri.hasQuery) {
             handleFileRequest(req, transferUpdate);
           }
@@ -141,6 +146,8 @@ class LocalNetworkServer {
   Future<bool> connectToSocket({
     required String deviceName,
     required String serverAddress,
+    required String deviceId,
+    required String regNumber,
     required int port,
     int maxConcurrentDownloads = 2,
     bool deleteOnError = true,
@@ -178,7 +185,7 @@ class LocalNetworkServer {
         );
         _server = httpServer;
         WebSocket socket = await WebSocket.connect(
-            'ws://$serverAddress:$port/ws?&deviceName=$deviceName&ip=$_ipAddress');
+            'ws://$serverAddress:$port/ws?&deviceName=$deviceName&deviceId=$deviceId&regNumber=$regNumber&ip=$_ipAddress');
         _sockets.add(socket);
         socket.listen(
           (event) async {
