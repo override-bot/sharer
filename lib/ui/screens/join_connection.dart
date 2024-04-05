@@ -42,6 +42,7 @@ class _JoinConnectionState extends State<JoinConnection> {
     void _onQRViewCreated(QRViewController controller) async {
       this.controller = controller;
       String deviceName = await DeviceData().getDeviceName(context);
+      String deviceId = await DeviceData().getDeviceId();
       controller.scannedDataStream.listen((scanData) {
         try {
           String data = scanData.code ?? "";
@@ -49,8 +50,10 @@ class _JoinConnectionState extends State<JoinConnection> {
 
           serverVm.setHostModel(_mod);
           print(_mod.port);
-          serverVm.joinNetwork(_mod.ipAddress, _mod.port, deviceName, context);
+          serverVm.joinNetwork(_mod.ipAddress, _mod.port, deviceName, context,
+              serverVm.regNo, deviceId);
           controller.dispose();
+          RouteController().pop(context);
           RouteController().pop(context);
         } catch (e) {
           PopUp().showError(

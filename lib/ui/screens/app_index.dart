@@ -5,6 +5,8 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sharer/ui/screens/connection_info.dart';
+import 'package:sharer/ui/screens/enter_regNumber.dart';
 import 'package:sharer/ui/screens/file_view.dart';
 import 'package:sharer/ui/shared/popup.dart';
 
@@ -45,7 +47,7 @@ class AppIndexState extends State<AppIndex> with WidgetsBindingObserver {
         backgroundColor: ceoPurple,
         onPressed: () {
           if (serverVm.isClient == false && serverVm.isServing == false) {
-            RouteController().push(context, JoinConnection());
+            RouteController().push(context, EnterRegNumber());
           } else {
             PopUp().showError("Connection already active", context);
           }
@@ -124,41 +126,45 @@ class AppIndexState extends State<AppIndex> with WidgetsBindingObserver {
                   TextStyle(fontSize: TextSize().h3(context), color: ceoWhite),
             ),
             serverVm.isServing == true
-                ? Container(
-                    width: MediaQuery.of(context).size.width / 2,
-                    padding: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        color: ceoWhite,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CircleAvatar(
-                          radius: 3,
-                          backgroundColor: serverVm.participants == 0
-                              ? Colors.grey
-                              : Colors.green,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        serverVm.participants == 0
-                            ? Text(
-                                'No members connected',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: TextSize().small(context),
-                                    color: ceoBlack),
-                              )
-                            : Text(
-                                '${serverVm.participants} members connected',
-                                style: TextStyle(
-                                    fontSize: TextSize().small(context),
-                                    color: ceoBlack),
-                              )
-                      ],
-                    ),
-                  )
+                ? GestureDetector(
+                    onTap: () {
+                      RouteController().push(context, ConnectionInfo());
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width / 2,
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                          color: ceoWhite,
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            radius: 3,
+                            backgroundColor: serverVm.participants == 0
+                                ? Colors.grey
+                                : Colors.green,
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          serverVm.participants == 0
+                              ? Text(
+                                  'No members connected',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: TextSize().small(context),
+                                      color: ceoBlack),
+                                )
+                              : Text(
+                                  '${serverVm.participants} members connected',
+                                  style: TextStyle(
+                                      fontSize: TextSize().small(context),
+                                      color: ceoBlack),
+                                )
+                        ],
+                      ),
+                    ))
                 : serverVm.isClient == true
                     ? Container(
                         width: MediaQuery.of(context).size.width / 2,

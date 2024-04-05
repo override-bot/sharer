@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -19,6 +20,28 @@ class DeviceData {
       _deviceName = androidInfo.model;
     }
     return _deviceName;
+  }
+
+  Future<String> getDeviceId() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    String deviceId;
+    try {
+      if (Platform.isIOS) {
+        IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+
+        deviceId = iosInfo.identifierForVendor ?? "";
+      } else {
+        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+
+        deviceId = androidInfo.id;
+      }
+      return deviceId;
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return "";
+    }
   }
 
   Future<String> getStorageDirectory() async {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sharer/utils/colors.dart';
 
 class LoadingButton extends StatefulWidget {
   final String? label;
@@ -21,8 +22,7 @@ class LoadingButtonState extends State<LoadingButton> {
       width: MediaQuery.of(context).size.width / 2,
       height: 50,
       decoration: BoxDecoration(
-          color: Color.fromARGB(255, 14, 140, 172),
-          borderRadius: BorderRadius.circular(15)),
+          color: ceoPurple, borderRadius: BorderRadius.circular(15)),
       margin: const EdgeInsets.only(bottom: 10, left: 20, right: 20),
       child: MaterialButton(
           onPressed: widget.onPressed,

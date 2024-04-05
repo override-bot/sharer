@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:sharer/core/data/models/attendance_model.dart';
 import 'package:sharer/core/data/models/host_model.dart';
 import 'package:sharer/core/services/device_info.dart';
 import 'package:sharer/core/services/server.dart';
@@ -37,6 +38,18 @@ class ServerVm extends ChangeNotifier {
     throw Exception('Address not found');
   }
 
+  List<Attendance> _students = [];
+  List<Attendance> get students => _students;
+  void addStudent(Attendance current) {
+    var index = _students.indexWhere((element) {
+      return element.deviceId == current.deviceId;
+    });
+    if (index == -1) {
+      _students.add(current);
+    }
+    notifyListeners();
+  }
+
   Future startServer(deviceName, context) async {
     final wifiIP = await retrieveHotspotAddress();
     String? path = await DeviceData().getStorageDirectory();
@@ -54,9 +67,10 @@ class ServerVm extends ChangeNotifier {
           downloadPath: path,
           port: port,
           onConnect: (name, address, deviceId, regNumber) {
+            addStudent(Attendance(deviceId: deviceId, regNumber: regNumber));
             upPart();
             print(_paricipant);
-            PopUp().showSuccess("$name has joined the network", context);
+            PopUp().showSuccess("$regNumber has joined the network", context);
           },
           deleteOnError: false,
           transferUpdate: (transfer) {
@@ -87,13 +101,20 @@ class ServerVm extends ChangeNotifier {
     _hostModel = model;
   }
 
-  joinNetwork(String address, int port, deviceName, context) async {
+  String? _regNo;
+  String? get regNo => _regNo;
+  setRegNo(number) {
+    _regNo = number;
+  }
+
+  joinNetwork(String address, int port, deviceName, context, regNumber,
+      deviceId) async {
     String path = await DeviceData().getStorageDirectory();
 
     try {
       bool soc = await _borrowedSocket.connectToSocket(
-          regNumber: '',
-          deviceId: "",
+          regNumber: regNumber,
+          deviceId: deviceId,
           onCloseSocket: () {
             PopUp().showError("Connection closed", context);
             closeSocket(port);
