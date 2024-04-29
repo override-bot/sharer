@@ -64,7 +64,7 @@ class ServerVm extends ChangeNotifier {
           },
           maxConcurrentDownloads: 10,
           serverAddress: wifiIP,
-          downloadPath: path,
+          downloadPath: path ?? "",
           port: port,
           onConnect: (name, address, deviceId, regNumber) {
             addStudent(Attendance(deviceId: deviceId, regNumber: regNumber));
@@ -109,7 +109,7 @@ class ServerVm extends ChangeNotifier {
 
   joinNetwork(String address, int port, deviceName, context, regNumber,
       deviceId) async {
-    String path = await DeviceData().getStorageDirectory();
+    String path = await DeviceData().getStorageDirectory() ?? "";
 
     try {
       bool soc = await _borrowedSocket.connectToSocket(

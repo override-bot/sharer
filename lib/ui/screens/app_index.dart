@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:sharer/ui/screens/connection_info.dart';
 import 'package:sharer/ui/screens/enter_regNumber.dart';
@@ -36,6 +37,23 @@ class AppIndexState extends State<AppIndex> with WidgetsBindingObserver {
     Container(),
     Container()
   ];
+  @override
+  void initState() {
+    super.initState();
+    requestStoragePermission();
+  }
+
+  Future<void> requestStoragePermission() async {
+    // Request storage permission
+    PermissionStatus status = await Permission.storage.request();
+    if (status == PermissionStatus.granted) {
+      // Permission granted
+      print('Storage permission granted');
+    } else {
+      // Permission denied
+      print('Storage permission denied');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

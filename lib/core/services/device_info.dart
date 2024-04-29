@@ -44,15 +44,25 @@ class DeviceData {
     }
   }
 
-  Future<String> getStorageDirectory() async {
+  Future<String?> getStorageDirectory() async {
     // Get the directory for storing files
-    var directory;
+    Directory? directory;
     if (Platform.isAndroid) {
-      directory = await getExternalStorageDirectory();
+      directory = await getApplicationDocumentsDirectory();
+    } else if (Platform.isIOS) {
+      directory = await getApplicationDocumentsDirectory();
     } else {
-      directory = await getDownloadsDirectory();
+      // Fallback to a generic directory for other platforms
+      directory = await getApplicationSupportDirectory();
     }
 
-    return directory.path;
+    if (directory != null) {
+      print(directory.path);
+      return directory.path;
+    } else {
+      // Handle error when directory is null
+      print('Failed to retrieve storage directory.');
+      return null;
+    }
   }
 }
